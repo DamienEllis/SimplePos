@@ -1,11 +1,10 @@
 package com.example.simplepos;
 
 //DP - include all the libraries
+
 import static android.content.ContentValues.TAG;
 
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,14 +15,15 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.json.JSONArray;
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Ref;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -44,42 +44,20 @@ public class ReferenceAmount extends AppCompatActivity {
 
     //DP - initialize all variables
     Button SubmitBtn, CancelBtn;
-    Button CashPayment, CreditPayment, BackBtn;
-    public String GetPolicyNumber;
-    public String GetIDNumber;
-    public String GetSupPolPaymentTypeID;
-    public String ClientNameString;
-    public String PolicyBalance;
-    public String PolicyName;
-    public String PolicyPremium;
-    public String PolicyHistID;
     public String Month;
     public int Year;
-    public String CellNumber;
-    public String ReceiptNumber;
-    public String ReceiptDate;
-    public String MonthsPaidFor;
-    public String SettlementType;
     public String UserPin;
     public String HandheldAuthToken;
     public String HandheldLastLogin;
     public String UserLogin;
     public String ConnectID;
     public String UserNumber;
-    public String Action;
-    public String GetConnectID;
-    public String GlobalAction;
     public String VendorID;
-    public String PayType;
-    public String RRN;
     public String DeviceID;
     public String GetCereriaApiKey;
     public String DeviceType;
-    public int MPIA;
-    public float OrigAmount;
     public float AmountInCents;
     public String BASE_URL = "https://web09.pol360.co.za/receipt/";
-    public JSONArray SystemParameters;
     public EditText Reference, OwnAmount;
     private ProgressBar ReferenceIndicator;
 
@@ -111,41 +89,35 @@ public class ReferenceAmount extends AppCompatActivity {
         OwnAmount = findViewById(R.id.OwnAmount);
         ReferenceIndicator = findViewById(R.id.ReferenceIndicator);
 
-        DateFormat dateFormat = new SimpleDateFormat("MM");
+        @SuppressLint("SimpleDateFormat") DateFormat dateFormat = new SimpleDateFormat("MM");
         Date date = new Date();
 
         Month = dateFormat.format(date);
 
         Year = Calendar.getInstance().get(Calendar.YEAR);
 
-        SubmitBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        SubmitBtn.setOnClickListener(view -> {
 
-                //DP - ensure reference is not empty
-                if (Reference.getText().toString().equals("")) {
-                    Toast.makeText(ReferenceAmount.this, "Please enter a reference!", Toast.LENGTH_SHORT).show();
+            //DP - ensure reference is not empty
+            if (Reference.getText().toString().equals("")) {
+                Toast.makeText(ReferenceAmount.this, "Please enter a reference!", Toast.LENGTH_SHORT).show();
 
-                //DP- ensure amount is not empty
-                } else if (OwnAmount.getText().toString().equals("")) {
-                    Toast.makeText(ReferenceAmount.this, "Please enter an amount!", Toast.LENGTH_SHORT).show();
-                } else {
+            //DP- ensure amount is not empty
+            } else if (OwnAmount.getText().toString().equals("")) {
+                Toast.makeText(ReferenceAmount.this, "Please enter an amount!", Toast.LENGTH_SHORT).show();
+            } else {
 
-                    //DP - get member Details
-                    EnterNumber ("0004285229086", "SAIDNumber");
-                }
+                //DP - get member Details
+                EnterNumber ("0004285229086", "SAIDNumber");
             }
         });
 
-        CancelBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //DP - start the new intent to the policy listing page.
-                Intent intentSend = new Intent(ReferenceAmount.this, LoginPage.class);
-                intentSend.setPackage("com.example.simplepos");
-                startActivity(intentSend);
-                finish();
-            }
+        CancelBtn.setOnClickListener(view -> {
+            //DP - start the new intent to the policy listing page.
+            Intent intentSend = new Intent(ReferenceAmount.this, LoginPage.class);
+            intentSend.setPackage("com.example.simplepos");
+            startActivity(intentSend);
+            finish();
         });
     }
 
@@ -167,7 +139,7 @@ public class ReferenceAmount extends AppCompatActivity {
         Call<String> call = ApiInterface.STRING_CALL("GetMemberInfoViaIDNumber", "BRYTE1234", IDType, UserInput, "121", "1212");
         call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+            public void onResponse(@NonNull Call<String> call, @NonNull retrofit2.Response<String> response) {
 
                 //DP - check condition
                 if (response.isSuccessful() && response.body() != null) {
@@ -177,8 +149,6 @@ public class ReferenceAmount extends AppCompatActivity {
 
                         //DP - convert response to JSON object
                         JSONObject jsonObject = new JSONObject(response.body());
-
-                        //Log.d("Json ResponseXX", "onResponse: " + jsonObject.toString());
 
                         if (jsonObject.getString("Result").equals("OK")) {
 
@@ -203,8 +173,6 @@ public class ReferenceAmount extends AppCompatActivity {
                             startActivity(SendIntent);
                             finish();
 
-                            //Toast.makeText(getApplicationContext(), jsonObject.getString("ReceiptMessage"), Toast.LENGTH_SHORT).show();
-
                             ReferenceIndicator.setVisibility(View.INVISIBLE);
                         } else {
 
@@ -224,7 +192,7 @@ public class ReferenceAmount extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 ReferenceIndicator.setVisibility(View.INVISIBLE);
             }
         });
