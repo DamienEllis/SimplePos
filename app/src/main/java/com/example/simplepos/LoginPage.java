@@ -1,36 +1,27 @@
 package com.example.simplepos;
 
 //DP - include all the libraries
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkCapabilities;
 import android.net.NetworkInfo;
-import android.net.NetworkRequest;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.Timer;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,18 +39,11 @@ public class LoginPage extends AppCompatActivity implements ConnectionReceiver.R
     //DP - Initialize variables
     private EditText etUserPin;
     public Button LoginBtn;
-    public TextView Settingsbtn;
     public String BASE_URL = "https://web09.pol360.co.za/receipt/", HandheldAuthToken, HandheldLastLogin, UserLogin, ConnectID;
     private ProgressBar LoginPageIndicator;
 
     protected LocationManager locationManager;
-    protected LocationListener locationListener;
-    protected Context context;
-    TextView txtLat;
     private String lat, GetDeviceID,  GetCereriaApiKey, DeviceType;
-    String provider;
-    protected String latitude, longitude;
-    protected boolean gps_enabled, network_enabled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,28 +61,23 @@ public class LoginPage extends AppCompatActivity implements ConnectionReceiver.R
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         //DP - login onclick listener
-        LoginBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        LoginBtn.setOnClickListener(view -> {
 
-                //DP - Ensure the User pin is not empty
-                if (!(etUserPin.getText().toString().equals(""))) {
+            //DP - Ensure the User pin is not empty
+            if (!(etUserPin.getText().toString().equals(""))) {
 
-                    //DP - set the indicator to visible
-                    LoginPageIndicator.setVisibility(View.VISIBLE);
+                //DP - set the indicator to visible
+                LoginPageIndicator.setVisibility(View.VISIBLE);
 
-                    //DP - Call the login method and pass the user pin
-                    UserLogin (etUserPin.getText().toString());
+                //DP - Call the login method and pass the user pin
+                UserLogin (etUserPin.getText().toString());
 
-                } else {
+            } else {
 
-                    //DP - Show warning message
-                    Toast.makeText(LoginPage.this, "Please enter User Pin", Toast.LENGTH_LONG).show();
-                }
+                //DP - Show warning message
+                Toast.makeText(LoginPage.this, "Please enter User Pin", Toast.LENGTH_LONG).show();
             }
         });
-
-
     }
 
     //DP - helper method to log the user in.
@@ -117,7 +96,7 @@ public class LoginPage extends AppCompatActivity implements ConnectionReceiver.R
         Call<String> call = ApiInterface.STRING_CALL("AuthenticateDeviceVendor", UserPin, "BRYTE1234", "123", "1234");
         call.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<String> call, retrofit2.Response<String> response) {
+            public void onResponse(@NonNull Call<String> call, @NonNull retrofit2.Response<String> response) {
 
                 //DP - check condition if there is a valid response
                 if (response.isSuccessful() && response.body() != null) {
@@ -126,8 +105,6 @@ public class LoginPage extends AppCompatActivity implements ConnectionReceiver.R
 
                         //DP - get the JSON data
                         JSONObject jsonObject = new JSONObject(response.body());
-
-                        //Log.d("Json Response", "onResponse: " + jsonObject.toString());
 
                         //DP - ensure we have the OK response
                         if (jsonObject.getString("Result").equals("OK")) {
@@ -182,7 +159,7 @@ public class LoginPage extends AppCompatActivity implements ConnectionReceiver.R
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 //DP - hide indicator
                 LoginPageIndicator.setVisibility(View.INVISIBLE);
                 Toast.makeText(getApplicationContext(), "Unexpected Error Occured "+t, Toast.LENGTH_SHORT).show();
@@ -211,13 +188,7 @@ public class LoginPage extends AppCompatActivity implements ConnectionReceiver.R
         }
 
 
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce=false;
-            }
-        }, 2000);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> doubleBackToExitPressedOnce=false, 2000);
     }
 
     private boolean isConnectedViaWifi() {

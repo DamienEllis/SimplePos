@@ -2,9 +2,9 @@ package com.example.simplepos;
 
 //DP - include all the libraries
 import static android.content.ContentValues.TAG;
-
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
@@ -22,7 +22,6 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.newland.sdk.ModuleManage;
 import com.newland.sdk.module.printer.ErrorCode;
 import com.newland.sdk.module.printer.PrintListener;
@@ -30,13 +29,9 @@ import com.newland.sdk.module.printer.PrintScriptUtil;
 import com.newland.sdk.module.printer.PrinterModule;
 import com.newland.sdk.module.printer.PrinterStatus;
 import com.newland.sdk.module.printer.PrinterStatusListener;
-
-
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.HashMap;
@@ -45,7 +40,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Retrofit;
@@ -61,12 +55,35 @@ public class PaymentMethod extends AppCompatActivity {
 
     //DP - initialize the variables
     Button CashPayment, CreditPayment, BackBtn, HomeBtn;
-    public String GetPolicyNumber, GetIDNumber, GetSupPolPaymentTypeID,
-            ClientNameString, PolicyBalance, PolicyName, PolicyPremium,
-            PolicyHistID,  Month, CellNumber, ReceiptNumber, ReceiptDate,
-            MonthsPaidFor, SettlementType, UserPin, HandheldAuthToken, HandheldLastLogin,
-            UserLogin, ConnectID, UserNumber, Action, GetConnectID, GlobalAction, PayType, VendorID, RRN,
-            DeviceID, GetCereriaApiKey, DeviceType, Reference, OwnAmount;
+    public String GetIDNumber;
+    public String GetSupPolPaymentTypeID;
+    public String ClientNameString;
+    public String PolicyBalance;
+    public String PolicyName;
+    public String PolicyPremium;
+    public String PolicyHistID;
+    public String Month;
+    public String CellNumber;
+    public String ReceiptNumber;
+    public String ReceiptDate;
+    public String MonthsPaidFor;
+    public String SettlementType;
+    public String UserPin;
+    public String HandheldAuthToken;
+    public String HandheldLastLogin;
+    public String UserLogin;
+    public String ConnectID;
+    public String UserNumber;
+    public String Action;
+    public String GetConnectID;
+    public String GlobalAction;
+    public String PayType;
+    public String VendorID;
+    public String RRN;
+    public String DeviceID;
+    public String GetCereriaApiKey;
+    public String DeviceType;
+    public String Reference;
 
     public int MPIA, Year;
     public double AmountInCents, OrigAmount;
@@ -74,45 +91,11 @@ public class PaymentMethod extends AppCompatActivity {
     private static final int REQUEST_CODE = 1;
 
     private PrinterModule printerModule;
-    public PrintScriptUtil printScriptUtil;
-    private static final int INDEX_PRINTER_STATE = 1;
-    private static final int INDEX_PRINT_SCRIPT = 2;
-    private static final int INDEX_PAPER_FEED = 3;
-    private static final int INDEX_PAPER_SIZE = 4;
-    private static final int INDEX_GET_FONT_PATH = 5;
-    private static final int INDEX_PAPER_CUT = 6;
-    private static final int INDEX_PAPER_LISTENER = 22;
-    private static final int INDEX_FILL7 = 7;
-    private static final int INDEX_FILL8= 8;
-    private static final int INDEX_FILL9= 9;
-
-    private static final int INDEX_GET_PRINT_UTILS = 10;
-    private static final int INDEX_UTILS_ADD_FONT = 11;
-    private static final int INDEX_UTILS_ADD_TEXT = 12;
-
-    private static final int INDEX_UTILS_ADD_IMAGE = 13;
-    private static final int INDEX_UTILS_ADD_BARCODE = 14;
-    private static final int INDEX_UTILS_ADD_TWOBARCODE = 15;
-
-    private static final int INDEX_UTILS_ADD_FEEDLINE = 16;
-    private static final int INDEX_UTILS_SET_GRAY = 17;
-    private static final int INDEX_UTILS_SET_SAPCE = 18;
-
-    private static final int INDEX_UTILS_ADD_DOTTED_LINE = 19;
-    private static final int INDEX_UTILS_PRINT = 20;
     private  ModuleManage moduleManage;
-
-    private Button print;
 
     private Boolean Committransaction = false, CardPayment = false;
 
     private ProgressBar SelectPaymentIndicator;
-
-    public JSONArray SystemParameters;
-
-    public CheckBox DebicheckBTN;
-    public TextView DebicheckMSG;
-    public LinearLayout DebicheckView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,8 +109,6 @@ public class PaymentMethod extends AppCompatActivity {
         boolean connectStatus= moduleManage.init(this);
         if(!connectStatus){
             Toast.makeText(this, "Device not connected properly!", Toast.LENGTH_SHORT).show();
-        } else {
-            //Toast.makeText(this, "Printer ready", Toast.LENGTH_SHORT).show();
         }
 
         //DP - initialize the printer module
@@ -185,7 +166,7 @@ public class PaymentMethod extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "Device not connected properly!", Toast.LENGTH_SHORT).show();
 
                 } else {
-                    //Toast.makeText(getApplicationContext(), "Printer ready", Toast.LENGTH_SHORT).show();
+
                     PayType = "Cash";
 
                     //DP - prevalidate the member
@@ -200,7 +181,6 @@ public class PaymentMethod extends AppCompatActivity {
             public void onClick(View view) {
 
                 PayType = "BankCard";
-                //RRN = "3545345345352353";
                 CardPayment = true;
 
                 //DP - prevalidate the member
@@ -218,7 +198,6 @@ public class PaymentMethod extends AppCompatActivity {
                 Integer MonthlyPayment = intent.getIntExtra("MonthlyPayment", 0);
                 Integer Balance = intent.getIntExtra("Balance", 0);
                 double ExpectedPay = MonthlyPayment * 1;
-                Log.d("MonthlyPayment", String.valueOf(ExpectedPay));
                 //DP - start the new intent to the policy listing page.
                 Intent intentSend = new Intent(PaymentMethod.this, ReferenceAmount.class);
                 intentSend.setPackage("com.example.simplepos");
@@ -306,8 +285,6 @@ public class PaymentMethod extends AppCompatActivity {
                         //DP - Convert response body to JSON object
                         JSONObject jsonObject = new JSONObject(response.body());
 
-                        //Log.d("pyp", "onResponse: " + jsonObject.toString());
-
                         //DP - check if response is okay
                         if (jsonObject.getString("Result").equals("OK")) {
 
@@ -391,8 +368,6 @@ public class PaymentMethod extends AppCompatActivity {
 
                         //DP - convert response body to JSON object
                         JSONObject jsonObject = new JSONObject(response.body());
-
-                        Log.d("pyp", "onResponse: " + jsonObject.toString());
 
                         //DP - check if response is okay
                         if (jsonObject.getString("Result").equals("OK")) {
@@ -636,6 +611,7 @@ public class PaymentMethod extends AppCompatActivity {
         }
         return false;
     }
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
@@ -645,32 +621,7 @@ public class PaymentMethod extends AppCompatActivity {
 
             SelectPaymentIndicator.setVisibility(View.INVISIBLE);
 
-
-            String uuid = intent.getStringExtra("TRANSACTION_ID");
-            String result = intent.getStringExtra("RESULT");
             String displayTest = intent.getStringExtra("DISPLAY_TEXT");
-            String responseCode = intent.getStringExtra("RESPONSE_CODE");
-            String serial = intent.getStringExtra("TERMINAL_ID");
-            String merchantName = intent.getStringExtra("MERCHANT_NAME");
-            String uti = intent.getStringExtra("UTI");
-            String time = intent.getStringExtra("TIME");
-            String date = intent.getStringExtra("DATE");
-            String terminalNo = intent.getStringExtra("TERMINAL_NO");
-            String merchantNo = intent.getStringExtra("MERCHANT_NO");
-
-            /// Receipt data
-            String pan = intent.getStringExtra("PAN");
-            String authCode = intent.getStringExtra("AUTH_CODE");
-            String authMode = intent.getStringExtra("AUTH_MODE");
-            String entryMode = intent.getStringExtra("ENTRY_MODE");
-            String cardDescription = intent.getStringExtra("CARD_DESCRIPTION");
-            String aid = intent.getStringExtra("AID");
-            String tvr = intent.getStringExtra("TVR");
-            String ctq = intent.getStringExtra("CTQ"); //VISA
-            String tsi = intent.getStringExtra("TSI"); //MASTERCARD
-            String cryptogram = intent.getStringExtra("AC");
-            String batchNo = intent.getStringExtra("BATCH_NO");
-            String receiptNo = intent.getStringExtra("RECEIPT_NO");
 
             dumpIntent("CardPayment Returned", intent);
 
@@ -699,66 +650,59 @@ public class PaymentMethod extends AppCompatActivity {
                 CashPayment.setEnabled(true);
                 CreditPayment.setEnabled(true);
 
-                ContinueBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                        //DP - Get policy info
-                        Intent intent = getIntent();
-                        String PolicyNumber = intent.getStringExtra("PolicyNumber");
-                        String PolicyPlan = intent.getStringExtra("PolicyPlan");
-                        Integer MonthlyPayment = intent.getIntExtra("MonthlyPayment", 0);
-                        Integer Balance = intent.getIntExtra("Balance", 0);
-                        double ExpectedPay = MonthlyPayment * 1;
-                        //DP - start the new intent to the policy listing page.
-                        Intent intentSend = new Intent(PaymentMethod.this, ReferenceAmount.class);
-                        intentSend.setPackage("com.example.simplepos");
-                        intentSend.putExtra("PolicyNumber", PolicyNumber);
-                        intentSend.putExtra("PolicyPlan", PolicyPlan);
-                        intentSend.putExtra("MonthlyPayment", MonthlyPayment);
-                        intentSend.putExtra("Balance", Balance);
-                        intentSend.putExtra("ExpectedPay", ExpectedPay);
-                        intentSend.putExtra("CellNumber", CellNumber);
-                        intentSend.putExtra("IDNumber", GetIDNumber);
-                        intentSend.putExtra("ConnectID", GetConnectID);
-                        intentSend.putExtra("ClientName", ClientNameString);
-                        intentSend.putExtra("PolicyName", PolicyName);
-                        intentSend.putExtra("Premium", PolicyPremium);
-                        intentSend.putExtra("PolicyBalance", PolicyBalance);
-                        intentSend.putExtra("SupPolPaymentTypeID", GetSupPolPaymentTypeID);
-                        intentSend.putExtra("PolicyHistID", PolicyHistID);
-                        //DP - set month and year for the next pages
-                        intentSend.putExtra("Month", Month);
-                        intentSend.putExtra("Year", Year);
-                        intentSend.putExtra("AmountInCents", AmountInCents);
-                        intentSend.putExtra("Action",Action);
-                        intentSend.putExtra("UserPin", UserPin);
-                        intentSend.putExtra("UserLogin", UserLogin);
-                        intentSend.putExtra("HandheldAuthToken", HandheldAuthToken);
-                        intentSend.putExtra("HandheldLastLogin", HandheldLastLogin);
-                        intentSend.putExtra("UserNumber", UserNumber);
-                        intentSend.putExtra("GlobalAction", GlobalAction);
-                        intentSend.putExtra("VendorID", VendorID);
-                        intentSend.putExtra("DeviceID", DeviceID);
-                        intentSend.putExtra("GetCereriaApiKey", GetCereriaApiKey);
-                        intentSend.putExtra("DeviceType", DeviceType);
-                        startActivity(intentSend);
-                        finish();
-                    }
+                ContinueBtn.setOnClickListener(view -> {
+                    dialog.dismiss();
+                    //DP - Get policy info
+                    Intent intent1 = getIntent();
+                    String PolicyNumber = intent1.getStringExtra("PolicyNumber");
+                    String PolicyPlan = intent1.getStringExtra("PolicyPlan");
+                    Integer MonthlyPayment;
+                    MonthlyPayment = intent1.getIntExtra("MonthlyPayment", 0);
+                    Integer Balance = intent1.getIntExtra("Balance", 0);
+                    double ExpectedPay;
+                    ExpectedPay = MonthlyPayment;
+                    //DP - start the new intent to the policy listing page.
+                    Intent intentSend = new Intent(PaymentMethod.this, ReferenceAmount.class);
+                    intentSend.setPackage("com.example.simplepos");
+                    intentSend.putExtra("PolicyNumber", PolicyNumber);
+                    intentSend.putExtra("PolicyPlan", PolicyPlan);
+                    intentSend.putExtra("MonthlyPayment", MonthlyPayment);
+                    intentSend.putExtra("Balance", Balance);
+                    intentSend.putExtra("ExpectedPay", ExpectedPay);
+                    intentSend.putExtra("CellNumber", CellNumber);
+                    intentSend.putExtra("IDNumber", GetIDNumber);
+                    intentSend.putExtra("ConnectID", GetConnectID);
+                    intentSend.putExtra("ClientName", ClientNameString);
+                    intentSend.putExtra("PolicyName", PolicyName);
+                    intentSend.putExtra("Premium", PolicyPremium);
+                    intentSend.putExtra("PolicyBalance", PolicyBalance);
+                    intentSend.putExtra("SupPolPaymentTypeID", GetSupPolPaymentTypeID);
+                    intentSend.putExtra("PolicyHistID", PolicyHistID);
+                    //DP - set month and year for the next pages
+                    intentSend.putExtra("Month", Month);
+                    intentSend.putExtra("Year", Year);
+                    intentSend.putExtra("AmountInCents", AmountInCents);
+                    intentSend.putExtra("Action",Action);
+                    intentSend.putExtra("UserPin", UserPin);
+                    intentSend.putExtra("UserLogin", UserLogin);
+                    intentSend.putExtra("HandheldAuthToken", HandheldAuthToken);
+                    intentSend.putExtra("HandheldLastLogin", HandheldLastLogin);
+                    intentSend.putExtra("UserNumber", UserNumber);
+                    intentSend.putExtra("GlobalAction", GlobalAction);
+                    intentSend.putExtra("VendorID", VendorID);
+                    intentSend.putExtra("DeviceID", DeviceID);
+                    intentSend.putExtra("GetCereriaApiKey", GetCereriaApiKey);
+                    intentSend.putExtra("DeviceType", DeviceType);
+                    startActivity(intentSend);
+                    finish();
                 });
-
             } else {
                 CashPayment.setEnabled(true);
                 CreditPayment.setEnabled(true);
                 Msg.setText("Transaction: "+ displayTest);
                 ContinueBtn.setText("OK");
                 dialog.show();
-                ContinueBtn.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dialog.dismiss();
-                    }
-                });
+                ContinueBtn.setOnClickListener(view -> dialog.dismiss());
             }
 
             //DP - set card payment to false for re-initializing
